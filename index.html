@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1f2937;--s2:#374151;--s3:#4b5563;
+  --acc:#e8ff47;--acc2:#ff6b35;--green:#47ff8a;
+  --blue:#47aaff;--purple:#c084fc;--gold:#f59e0b;
+  --text:#f9fafb;--muted:#6b7280;--border:#374151;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+
+/* ── SECTION SWITCHER ── */
+.section-bar{display:flex;overflow-x:auto;scrollbar-width:none;gap:2px;background:var(--border);}
+.section-bar::-webkit-scrollbar{display:none;}
+.sec-btn{flex:0 0 auto;padding:12px 16px;text-align:center;cursor:pointer;border:none;transition:all .2s;background:var(--s2);min-width:80px;}
+.sec-btn.active-mon{background:#0f1a00;border-bottom:3px solid var(--acc);}
+.sec-btn.active-thenics{background:#1a1000;border-bottom:3px solid var(--gold);}
+.sec-btn.active-custom{background:#00101a;border-bottom:3px solid var(--blue);}
+.sec-btn.active-planning{background:#0d0a1a;border-bottom:3px solid #a78bfa;}
+.sec-btn.active-hs{background:#0d1a2a;border-bottom:3px solid #38bdf8;}
+.sec-btn.active-routine{background:#1a0d1a;border-bottom:3px solid #f472b6;}
+.sec-btn.active-mu{background:#1a0a00;border-bottom:3px solid #f97316;}
+.sec-btn.active-hspu{background:#1a1200;border-bottom:3px solid #f59e0b;}
+.sec-btn.active-rehab{background:#1a0500;border-bottom:3px solid var(--acc2);}
+.sec-btn-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;}
+.sec-btn-sub{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px;white-space:nowrap;}
+.sec-btn.active-mon .sec-btn-title{color:var(--acc);}
+.sec-btn.active-thenics .sec-btn-title{color:var(--gold);}
+
+/* ── SECTIONS ── */
+.section{display:none;}
+.section.active{display:block;}
+
+/* ── NAV & HEADER ── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--acc);}
+.nav-logo.thenics{color:var(--gold);}
+.nav-info{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+
+.header{padding:20px 20px 14px;}
+.header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,8vw,60px);line-height:.9;letter-spacing:2px;}
+.header h1 em{font-style:normal;}
+.header h1 em.yellow{color:var(--acc);}
+.header h1 em.gold{color:var(--gold);}
+
+.stats{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:1;}
+.stat-val.y{color:var(--acc);}.stat-val.g{color:var(--green);}.stat-val.o{color:var(--acc2);}.stat-val.p{color:var(--purple);}.stat-val.gold{color:var(--gold);}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+
+.week-dots{display:flex;gap:3px;margin-top:10px;flex-wrap:wrap;}
+.wd{width:26px;height:26px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;letter-spacing:.5px;color:var(--muted);}
+.wd.done{background:var(--acc);border-color:var(--acc);color:#000;font-weight:700;}
+.wd.now{border-color:var(--acc);color:var(--acc);}
+
+/* ── CONTENT ── */
+.content{padding:16px 20px;display:none;}
+.content.active{display:block;}
+
+/* INPUT RUNNING CALCULATOR */
+.run-input{background:var(--s3);border:1px solid var(--border);color:var(--text);padding:8px;font-family:'DM Mono',monospace;font-size:14px;width:100%;text-align:center;}
+.run-input:focus{border-color:var(--green);outline:none;}
+
+@media(max-width:580px){
+  .nav,.header,.content{padding-left:14px;padding-right:14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="section-bar">
+  <div class="sec-btn active-mon" id="secbtn-mon" onclick="switchSection('mon')">
+    <div class="sec-btn-title">MON PROG</div>
+    <div class="sec-btn-sub">Pull · Push · Leg</div>
+  </div>
+  <div class="sec-btn" id="secbtn-custom" onclick="switchSection('custom')">
+    <div class="sec-btn-title" style="color:var(--blue);">PERSO</div>
+    <div class="sec-btn-sub">Corde & Course</div>
+  </div>
+</div>
+
+<div class="section active" id="section-mon">
+  <div class="nav">
+    <div class="nav-logo">WORKOUT•TRACKER</div>
+    <div class="nav-info">Programme Entraînement</div>
+  </div>
+  <div class="header">
+    <h1>MON <em class="yellow">PROG</em></h1>
+  </div>
+  <div class="content active">
+    <p style="color:var(--muted);font-size:13px;">Séances et entraînements configurés.</p>
+  </div>
+</div>
+
+<div class="section" id="section-custom">
+  <div class="nav">
+    <span class="nav-logo" style="color:var(--blue);">WORKOUT•TRACKER</span>
+  </div>
+  <div class="header">
+    <h1><em style="color:var(--blue);">OUTILS</em><br>PERSO</h1>
+  </div>
+  <div style="padding:0 20px 120px;">
+
+    <div style="margin-bottom:20px;background:var(--s2);border:1px solid var(--green);padding:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--green);margin-bottom:12px;">🏃 CALCULATEUR D'ALLURE (COURSE À PIED)</div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label style="font-size:9px;letter-spacing:1.5px;color:var(--muted);display:block;margin-bottom:4px;">DISTANCE (KM)</label>
+          <input type="number" id="runDist" class="run-input" placeholder="ex: 5" step="0.01" oninput="calculatePace()">
+        </div>
+        <div>
+          <label style="font-size:9px;letter-spacing:1.5px;color:var(--muted);display:block;margin-bottom:4px;">TEMPS (MINUTES)</label>
+          <input type="number" id="runMin" class="run-input" placeholder="ex: 25" oninput="calculatePace()">
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div>
+          <label style="font-size:9px;letter-spacing:1.5px;color:var(--muted);display:block;margin-bottom:4px;">HEURES (OPTIONNEL)</label>
+          <input type="number" id="runHours" class="run-input" placeholder="ex: 0" oninput="calculatePace()">
+        </div>
+        <div>
+          <label style="font-size:9px;letter-spacing:1.5px;color:var(--muted);display:block;margin-bottom:4px;">SECONDES (OPTIONNEL)</label>
+          <input type="number" id="runSec" class="run-input" placeholder="ex: 0" oninput="calculatePace()">
+        </div>
+      </div>
+
+      <div style="background:var(--s3);padding:12px;display:flex;justify-content:space-around;text-align:center;border-left:3px solid var(--green);">
+        <div>
+          <div style="font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Allure Moyenne</div>
+          <div id="paceResult" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);margin-top:2px;">--:-- /km</div>
+        </div>
+        <div style="border-left:1px solid var(--border);padding-left:16px;">
+          <div style="font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">Vitesse Moyenne</div>
+          <div id="speedResult" style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text);margin-top:2px;">-- km/h</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchSection(sec){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active-mon', 'active-custom'));
+  
+  document.getElementById('section-' + sec).classList.add('active');
+  const btn = document.getElementById('secbtn-' + sec);
+  if(btn) btn.classList.add('active-' + sec);
+}
+
+function calculatePace(){
+  const dist = parseFloat(document.getElementById('runDist').value) || 0;
+  const hours = parseFloat(document.getElementById('runHours').value) || 0;
+  const mins = parseFloat(document.getElementById('runMin').value) || 0;
+  const secs = parseFloat(document.getElementById('runSec').value) || 0;
+
+  const totalSeconds = (hours * 3600) + (mins * 60) + secs;
+
+  if (dist <= 0 || totalSeconds <= 0) {
+    document.getElementById('paceResult').textContent = "--:-- /km";
+    document.getElementById('speedResult').textContent = "-- km/h";
+    return;
+  }
+
+  // Pace en secondes par km
+  const secPerKm = totalSeconds / dist;
+  const paceMin = Math.floor(secPerKm / 60);
+  const paceSec = Math.round(secPerKm % 60);
+  const formattedPaceSec = paceSec < 10 ? '0' + paceSec : paceSec;
+
+  // Vitesse en km/h
+  const totalHours = totalSeconds / 3600;
+  const speed = (dist / totalHours).toFixed(1);
+
+  document.getElementById('paceResult').textContent = `${paceMin}:${formattedPaceSec} /km`;
+  document.getElementById('speedResult').textContent = `${speed} km/h`;
+}
+</script>
+</body>
+</html>
