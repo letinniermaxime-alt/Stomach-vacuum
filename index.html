@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programme Athlétique Hybride</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #38bdf8;
+            --accent-green: #34d399;
+            --accent-orange: #fb923c;
+            --accent-purple: #c084fc;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --input-bg: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 12px;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        header {
+            text-align: center;
+            padding: 25px 15px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        header h1 { font-size: 1.6rem; color: var(--accent-blue); margin-bottom: 5px; }
+        header p { color: var(--text-muted); font-size: 0.85rem; }
+
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .day-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .day-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .day-sub { font-size: 0.8rem; }
+        .day-rest { color: var(--accent-orange); font-weight: 600; font-size: 0.85rem; }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .badge-strength { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
+        .badge-hyrox { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); }
+        .badge-run { background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); }
+        .badge-skill { background: rgba(192, 132, 252, 0.15); color: var(--accent-purple); }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            margin: 25px 0 15px 0;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .workout-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            scroll-margin-top: 15px;
+        }
+
+        .workout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .workout-header h3 { font-size: 1.15rem; color: var(--accent-blue); }
+
+        /* NOUVEAU DESIGN RESPONSIVE EN CARTES D'EXERCICES */
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .exercise-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+            gap: 10px;
+        }
+
+        .exercise-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .exercise-meta {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .exercise-consigne {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .exercise-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .input-group label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .track-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--accent-green);
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .track-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .hybrid-box {
+            background: rgba(52, 211, 153, 0.05);
+            border-left: 4px solid var(--accent-green);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+        }
+
+        .hybrid-box.run {
+            background: rgba(251, 146, 60, 0.05);
+            border-left-color: var(--accent-orange);
+        }
+
+        .hybrid-box h4 { color: #fff; margin-bottom: 6px; font-size: 0.95rem; }
+        .hybrid-box p { color: var(--text-muted); font-size: 0.85rem; }
+
+        .top-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="top">
+        <header>
+            <h1>PROGRAMME ATHLÉTIQUE HYBRIDE</h1>
+            <p>Street Lifting • Calisthénie • Hyrox • Course à pied</p>
+        </header>
+
+        <h2 class="section-title">📅 Planning de la Semaine</h2>
+        <div class="weekly-grid">
+            <a href="#lundi" class="day-card"><div class="day-title">Lundi</div><div class="day-sub">Run Z2</div><span class="badge badge-run">30-45m Run</span></a>
+            <a href="#mardi" class="day-card"><div class="day-title">Mardi</div><div class="day-sub">Push / Pull</div><span class="badge badge-strength">Focus MU</span></a>
+            <a href="#mercredi" class="day-card"><div class="day-title">Mercredi</div><div class="day-sub">Hyrox</div><span class="badge badge-hyrox">Conditioning</span></a>
+            <a href="#jeudi" class="day-card"><div class="day-title">Jeudi</div><div class="day-sub">Push / Pull</div><span class="badge badge-strength">Haut du corps</span></a>
+            <a href="#vendredi" class="day-card"><div class="day-title">Vendredi</div><div class="day-sub">Skill + Run</div><span class="badge badge-skill">MU & Frac.</span></a>
+            <div class="day-card"><div class="day-title">Samedi</div><div class="day-rest">REPOS</div></div>
+            <div class="day-card"><div class="day-title">Dimanche</div><div class="day-rest">REPOS</div></div>
+        </div>
+
+        <h2 class="section-title">💪 Détail des Séances</h2>
+
+        <!-- LUNDI -->
+        <div class="workout-card" id="lundi">
+            <div class="workout-header">
+                <h3>LUNDI — Run Zone 2 (Endurance)</h3>
+                <span class="badge badge-run">Endurance</span>
+            </div>
+            <div class="hybrid-box run" style="margin-top: 0;">
+                <h4>🏃‍♂️ Course en Zone 2 (40-45 min)</h4>
+                <p>Aisance respiratoire totale. Renseigne tes données :</p>
+                <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 90px;">
+                        <input type="number" class="track-input" id="lun-dist" placeholder="Dist. (km)" oninput="calcInlinePace('lun')">
+                    </div>
+                    <div style="flex: 1; min-width: 90px;">
+                        <input type="number" class="track-input" id="lun-min" placeholder="Temps (min)" oninput="calcInlinePace('lun')">
+                    </div>
+                    <div style="flex: 1; min-width: 90px;">
+                        <input type="number" class="track-input" id="lun-bpm" placeholder="BPM moyen">
+                    </div>
+                </div>
+                <div style="margin-top: 8px;">
+                    <input type="text" class="track-input" id="lun-pace-res" placeholder="Allure calculée" readonly style="color: var(--accent-orange); font-weight: bold; text-align: center;">
+                </div>
+            </div>
+            <a href="#top" class="top-link">↑ Haut de page</a>
+        </div>
+
+        <!-- MARDI -->
+        <div class="workout-card" id="mardi">
+            <div class="workout-header">
+                <h3>MARDI — Push / Pull (Spécifique MU)</h3>
+                <span class="badge badge-strength">Focus Muscle-Up</span>
+            </div>
+            <div class="exercise-list">
+                
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">Montée en gamme MU</div>
+                        <div class="exercise-meta">Orange → Bleu | Repos 2m</div>
+                    </div>
+                    <div class="exercise-consigne">1 rep orange, 1 rep jaune, 1 rep bleu + 1-2 essais PDC.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Élastique / Charge</label>
+                            <input type="text" class="track-input" id="mar-ex1-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="mar-ex1-rep">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">Bloc Muscle-Up</div>
+                        <div class="exercise-meta">3-4 × 1 rep | Repos 3m</div>
+                    </div>
+                    <div class="exercise-consigne">1 rep PDC ou 1-2 reps élastique 15kg (focus vitesse).</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Élastique / Charge</label>
+                            <input type="text" class="track-input" id="mar-ex2-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="mar-ex2-rep">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">SS1 : Chest-to-Bar + Dips Barre</div>
+                        <div class="exercise-meta">3 × (3-5 C2B + 6-8 Dips) | Repos 2m</div>
+                    </div>
+                    <div class="exercise-consigne">Tractions explosives puis dips barre droite.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Lest / Charge</label>
+                            <input type="text" class="track-input" id="mar-ex3-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="mar-ex3-rep">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">SS2 : Hollow Hold + Triceps Poulie</div>
+                        <div class="exercise-meta">3 × (30" + 10-12) | Repos 1m30</div>
+                    </div>
+                    <div class="exercise-consigne">Gainage strict puis finition triceps.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Poids / Charge</label>
+                            <input type="text" class="track-input" id="mar-ex4-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="mar-ex4-rep">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <a href="#top" class="top-link">↑ Haut de page</a>
+        </div>
+
+        <!-- MERCREDI -->
+        <div class="workout-card" id="mercredi">
+            <div class="workout-header">
+                <h3>MERCREDI — HYROX & Legs</h3>
+                <span class="badge badge-hyrox">Conditioning</span>
+            </div>
+            <div class="hybrid-box">
+                <h4>⚡ Circuit 1 — 100/60/30 (FOR TIME)</h4>
+                <p>100 Squats / 60 Pompes / 30 Tractions.</p>
+                <input type="text" class="track-input" id="mer-c1-time" placeholder="Chrono total" style="margin-top:8px;">
+            </div>
+            <div class="hybrid-box" style="margin-top: 12px;">
+                <h4>🏃‍♂️ Circuit 2 — Format Hyrox (5 Tours)</h4>
+                <p>500m Run/Rameur + 20 Fentes + 6 Burpees Broad + 10 Squats sautés.</p>
+                <input type="text" class="track-input" id="mer-c2-time" placeholder="Chrono total" style="margin-top:8px;">
+            </div>
+            <a href="#top" class="top-link">↑ Haut de page</a>
+        </div>
+
+        <!-- JEUDI -->
+        <div class="workout-card" id="jeudi">
+            <div class="workout-header">
+                <h3>JEUDI — PUSH / PULL (Volume & Force)</h3>
+                <span class="badge badge-strength">Haut du Corps</span>
+            </div>
+            <div class="exercise-list">
+                
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">MU + HSPU</div>
+                        <div class="exercise-meta">4 × (1-2 + Max-1) | Repos 2-3m</div>
+                    </div>
+                    <div class="exercise-consigne">Enchaînement direct.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Lest (kg)</label>
+                            <input type="text" class="track-input" id="jeu-ex1-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="jeu-ex1-rep">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">Tractions PDC</div>
+                        <div class="exercise-meta">3 × Max -1 | Repos 2-3m</div>
+                    </div>
+                    <div class="exercise-consigne">1 rep de réserve.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Lest (kg)</label>
+                            <input type="text" class="track-input" id="jeu-ex2-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="jeu-ex2-rep">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">Dips Iso</div>
+                        <div class="exercise-meta">3 × (5 + 5" iso) | Repos 2-3m</div>
+                    </div>
+                    <div class="exercise-consigne">5 reps + 5s d'isométrie.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Lest (kg)</label>
+                            <input type="text" class="track-input" id="jeu-ex3-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="jeu-ex3-rep">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">Pompes AMRAP</div>
+                        <div class="exercise-meta">6 min Max | Repos 2m</div>
+                    </div>
+                    <div class="exercise-consigne">Max de reps en 6 minutes.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Lest (kg)</label>
+                            <input type="text" class="track-input" id="jeu-ex4-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Perf Réalisée</label>
+                            <input type="text" class="track-input" id="jeu-ex4-rep">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <a href="#top" class="top-link">↑ Haut de page</a>
+        </div>
+
+        <!-- VENDREDI -->
+        <div class="workout-card" id="vendredi">
+            <div class="workout-header">
+                <h3>VENDREDI — SKILL MU & Fractionné</h3>
+                <span class="badge badge-skill">Technique & Cardio</span>
+            </div>
+            <div class="exercise-list">
+                <div class="exercise-item">
+                    <div class="exercise-header">
+                        <div class="exercise-name">Skill Muscle-Up</div>
+                        <div class="exercise-meta">15-20 min travail | Repos 2m</div>
+                    </div>
+                    <div class="exercise-consigne">Qualité du mouvement, trajectoire et transition.</div>
+                    <div class="exercise-inputs">
+                        <div class="input-group">
+                            <label>Sensation</label>
+                            <input type="text" class="track-input" id="ven-ex1-kg">
+                        </div>
+                        <div class="input-group">
+                            <label>Temps / Reps</label>
+                            <input type="text" class="track-input" id="ven-ex1-rep">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hybrid-box run">
+                <h4>⚡ Fractionné Tapis (30s / 30s)</h4>
+                <p>10 × (30s sprint à 15-16 km/h / 30s récupération pieds sur les bords du tapis).</p>
+                <input type="text" class="track-input" id="ven-run-track" placeholder="Vitesse / Sensations" style="margin-top:8px;">
+            </div>
+            <a href="#top" class="top-link">↑ Haut de page</a>
+        </div>
+
+        <footer>
+            <p>Sauvegarde automatique locale via le navigateur</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const inputs = document.querySelectorAll(".track-input");
+            inputs.forEach(input => {
+                const savedValue = localStorage.getItem(input.id);
+                if (savedValue) input.value = savedValue;
+                input.addEventListener("input", (e) => {
+                    localStorage.setItem(e.target.id, e.target.value);
+                });
+            });
+
+            const paceResLun = document.getElementById("lun-pace-res");
+            if (paceResLun) {
+                const savedPace = localStorage.getItem("lun-pace-res");
+                if (savedPace) paceResLun.value = savedPace;
+            }
+        });
+
+        function calcInlinePace(prefix) {
+            const dist = parseFloat(document.getElementById(`${prefix}-dist`).value) || 0;
+            const mins = parseFloat(document.getElementById(`${prefix}-min`).value) || 0;
+            const resInput = document.getElementById(`${prefix}-pace-res`);
+
+            if (dist > 0 && mins > 0) {
+                const totalSec = mins * 60;
+                const secPerKm = totalSec / dist;
+                const pMin = Math.floor(secPerKm / 60);
+                const pSec = Math.round(secPerKm % 60);
+                const formattedSec = pSec < 10 ? '0' + pSec : pSec;
+                const speed = (dist / (mins / 60)).toFixed(1);
+
+                const resultStr = `${pMin}'${formattedSec}"/km (${speed} km/h)`;
+                resInput.value = resultStr;
+                localStorage.setItem(`${prefix}-pace-res`, resultStr);
+            } else {
+                resInput.value = "";
+                localStorage.removeItem(`${prefix}-pace-res`);
+            }
+        }
+    </script>
+</body>
+</html>
+       
